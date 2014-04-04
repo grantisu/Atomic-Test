@@ -21,16 +21,16 @@ double dtime(void) {
 
 
 #define SETZERO(data)                \
-	for (int _SZ_i=0; _SZ_i < vars; _SZ_i++) \
+	for (int _SZ_i=0; _SZ_i < count; _SZ_i++) \
 		data[_SZ_i*stride] = 0;
 
 #define INCREMENT(data)              \
-	for (int _INC_i=0; _INC_i < vars; _INC_i++) \
+	for (int _INC_i=0; _INC_i < count; _INC_i++) \
 		data[_INC_i*stride] += 1;
 
-VARTYPE get_error(VARTYPE *data, int64_t iters, int64_t vars, int64_t stride) {
+VARTYPE get_error(VARTYPE *data, int64_t iters, int64_t count, int64_t stride) {
 	VARTYPE err = 0;
-	for (int64_t i=0; i < vars; i++)
+	for (int64_t i=0; i < count; i++)
 		err += iters - data[i*stride];
 	return err;
 }
@@ -38,7 +38,7 @@ VARTYPE get_error(VARTYPE *data, int64_t iters, int64_t vars, int64_t stride) {
 
 int main(int argc, char **argv) {
 	int64_t iters = 10000;
-	int64_t vars = 10;
+	int64_t count = 10;
 	int64_t stride = 1;
 	size_t data_sz;
 	VARTYPE *data;
@@ -49,21 +49,21 @@ int main(int argc, char **argv) {
 	if (argc > 1)
 		iters = atoll(argv[1]);
 	if (argc > 2)
-		vars = atoll(argv[2]);
+		count = atoll(argv[2]);
 	if (argc > 3)
 		stride = atoll(argv[3]);
 	
-	data_sz = sizeof(VARTYPE) * vars * stride;
+	data_sz = sizeof(VARTYPE) * count * stride;
 	data = malloc(data_sz);
 
 	for (int k=0; k < LOOPCOUNT; k++) {
-		for (int j=0; j < vars; j++) {
+		for (int j=0; j < count; j++) {
 			data[j*stride] = 0;
 		}
 		dtime();
 		#pragma omp parallel for
 		for (int j=0; j < iters; j++) {
-			for (int i=0; i < vars; i++) {
+			for (int i=0; i < count; i++) {
 				#ifdef ATOMIC
 				#pragma omp atomic
 				#endif
@@ -71,10 +71,10 @@ int main(int argc, char **argv) {
 			}
 		}
 		t += dtime();
-		err += get_error(data, iters, vars, stride);
+		err += get_error(data, iters, count, stride);
 	}
 	/* report nanoseconds per add & avg err per thousand adds */
-	norm = 1.0 / (iters*vars*LOOPCOUNT);
+	norm = 1.0 / (iters*count*LOOPCOUNT);
 	printf("%f,%f\n", 1e9*t*norm, 1e3*(double)err*norm /*, data_sz / 1024. */);
 
 	return 0;
