@@ -83,36 +83,48 @@ int main(int argc, char **argv) {
 	} \
 	double dt = dtime();
 
+	loops = 1;
+	double min_time = 0.25;
+	double noise_thresh = 0.001;
+	double t = 0, overhead;
 
-	/* Measure minimum loop overhead */
-	double overhead = 1e12;
-	for (int k=0; k < loops; k++) {
+	while (t < min_time) {
+		if (t < noise_thresh)
+			loops *= 10;
+		else
+			loops = 1.1*(loops*min_time) / t;
 
-		MAIN_FOR_TOP
-			ridx += idx;
-		MAIN_FOR_MID
-			ridx -= idx;
-		MAIN_FOR_BOT
+		/* Measure minimum loop overhead */
+		overhead = 1e12;
+		for (int k=0; k < loops; k++) {
 
-		overhead = dt < overhead ? dt : overhead;
-	}
+			MAIN_FOR_TOP
+				ridx += idx;
+			MAIN_FOR_MID
+				ridx -= idx;
+			MAIN_FOR_BOT
 
-	double   t = 0;
-	for (int k=0; k < loops; k++) {
-		for (int j=0; j < count; j++) {
-			data[j*stride] = 0;
+			overhead = dt < overhead ? dt : overhead;
 		}
 
-		MAIN_FOR_TOP
-			_Pragma ("omp atomic")
-			data[idx] += 1;
-		MAIN_FOR_MID
-			data[idx] += 1;
-		MAIN_FOR_BOT
+		t = 0;
+		for (int k=0; k < loops; k++) {
+			for (int j=0; j < count; j++) {
+				data[j*stride] = 0;
+			}
 
-		t += dt;
+			MAIN_FOR_TOP
+				_Pragma ("omp atomic")
+				data[idx] += 1;
+			MAIN_FOR_MID
+				data[idx] += 1;
+			MAIN_FOR_BOT
+
+			t += dt;
+		}
+		opt_hack = ridx;
+
 	}
-	opt_hack = ridx;
 
 	if (print_everything) {
 		printf("%d,%d,%d,%d,%d,", atomic, random, omp_get_max_threads(), stride, count);
