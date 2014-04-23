@@ -29,7 +29,7 @@ test: all
 	@echo STRIDE: $(STRIDE) >&2
 	@echo RANDOM: $(RANDOM) >&2
 	@echo ATOMIC: $(ATOMIC) >&2
-	@echo Atomic,Random,Threads,Stride,Count,Time,Err
+	@echo Atomic,Random,Threads,Stride,Count,Time
 	@for atomic in $(ATOMIC) ; do \
 	  for rand in $(RANDOM) ; do \
 	    for tcnt in $(THREADS) ; do \

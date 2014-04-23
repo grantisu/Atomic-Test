@@ -20,13 +20,6 @@ double dtime(void) {
 #define VARTYPE int
 #endif
 
-VARTYPE get_error(VARTYPE *data, int64_t iters, int64_t count, int64_t stride) {
-	VARTYPE err = 0;
-	for (int64_t i=0; i < count; i++)
-		err += iters - data[i*stride];
-	return err;
-}
-
 static volatile int opt_hack;
 
 int main(int argc, char **argv) {
@@ -38,7 +31,6 @@ int main(int argc, char **argv) {
 	uint32_t atomic = 0;
 	size_t data_sz;
 	VARTYPE *data;
-	double err = 0;
 	double norm;
 	uint32_t qseed, ridx=0;
 
@@ -119,13 +111,12 @@ int main(int argc, char **argv) {
 		MAIN_FOR_BOT
 
 		t += dtime();
-		err += get_error(data, iters, count, stride);
 	}
 	opt_hack = ridx;
-	/* report nanoseconds per add & avg err per thousand adds */
+	/* report nanoseconds per add */
 	norm = 1.0 / (iters*count*loops);
 	overhead *= loops;
-	printf("%f,%f\n", 1e9*(t > overhead ? t - overhead : 0)*norm,1e3*(double)err*norm /*, data_sz / 1024. */);
+	printf("%f\n", 1e9*(t > overhead ? t - overhead : 0)*norm /*, data_sz / 1024. */);
 
 	return 0;
 }
