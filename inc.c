@@ -31,7 +31,6 @@ int main(int argc, char **argv) {
 	uint32_t atomic = 0;
 	size_t data_sz;
 	VARTYPE *data;
-	double norm;
 	uint32_t qseed, ridx=0;
 
 	if (argc > 1)
@@ -113,10 +112,10 @@ int main(int argc, char **argv) {
 		t += dtime();
 	}
 	opt_hack = ridx;
-	/* report nanoseconds per add */
-	norm = 1.0 / (iters*count*loops);
 	overhead *= loops;
-	printf("%f\n", 1e9*(t > overhead ? t - overhead : 0)*norm /*, data_sz / 1024. */);
+	/* report nanoseconds per add */
+	t = t > overhead ? 1e9*(t - overhead) / (iters * count * loops) : 0;
+	printf("%f\n", t);
 
 	return 0;
 }
