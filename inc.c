@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
 	size_t data_sz;
 	VARTYPE *data;
 	uint32_t qseed, ridx=0;
+	uint32_t print_everything=0;
 
 	if (argc > 1)
 		loops = atol(argv[1]);
@@ -112,6 +113,11 @@ int main(int argc, char **argv) {
 		t += dtime();
 	}
 	opt_hack = ridx;
+
+	if (print_everything) {
+		printf("%d,%d,%d,%d,%d,", atomic, random, omp_get_max_threads(), stride, count);
+	}
+
 	overhead *= loops;
 	/* report nanoseconds per add */
 	t = t > overhead ? 1e9*(t - overhead) / (iters * count * loops) : 0;
