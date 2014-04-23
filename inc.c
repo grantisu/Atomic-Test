@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 	size_t data_sz;
 	VARTYPE *data;
 	uint32_t qseed, ridx=0;
-	uint32_t print_everything=0;
+	uint32_t print_everything=1;
 
 	if (argc > 1)
 		loops = atol(argv[1]);

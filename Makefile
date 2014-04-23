@@ -35,7 +35,7 @@ test: all
 	    for tcnt in $(THREADS) ; do \
 	      for stride in $(STRIDE) ; do \
 	        for var in $(VARS) ; do \
-	          echo -n "$$atomic,$$rand,$$tcnt,$$stride,$$var,"; env OMP_NUM_THREADS=$$tcnt ./$(PROG) $(LOOPS) $(ITERS) $$var $$stride $$rand $$atomic ; \
+	          env OMP_NUM_THREADS=$$tcnt ./$(PROG) $(LOOPS) $(ITERS) $$var $$stride $$rand $$atomic ; \
 	        done ; \
 	      done ; \
 	    done ; \
