@@ -16,17 +16,9 @@ double dtime(void) {
 }
 
 
+#ifndef VARTYPE
 #define VARTYPE int
-#define LOOPCOUNT 10
-
-
-#define SETZERO(data)                \
-	for (int _SZ_i=0; _SZ_i < count; _SZ_i++) \
-		data[_SZ_i*stride] = 0;
-
-#define INCREMENT(data)              \
-	for (int _INC_i=0; _INC_i < count; _INC_i++) \
-		data[_INC_i*stride] += 1;
+#endif
 
 VARTYPE get_error(VARTYPE *data, int64_t iters, int64_t count, int64_t stride) {
 	VARTYPE err = 0;
@@ -35,47 +27,105 @@ VARTYPE get_error(VARTYPE *data, int64_t iters, int64_t count, int64_t stride) {
 	return err;
 }
 
+static volatile int opt_hack;
 
 int main(int argc, char **argv) {
-	int64_t iters = 10000;
-	int64_t count = 10;
-	int64_t stride = 1;
+	uint32_t loops = 15;
+	uint32_t iters = 1000;
+	uint32_t count = 10;
+	uint32_t stride = 1;
+	uint32_t random = 0;
+	uint32_t atomic = 0;
 	size_t data_sz;
 	VARTYPE *data;
 	double err = 0;
-	double t = 0;
 	double norm;
+	uint32_t qseed, ridx=0;
 
 	if (argc > 1)
-		iters = atoll(argv[1]);
+		loops = atol(argv[1]);
 	if (argc > 2)
-		count = atoll(argv[2]);
+		iters = atol(argv[2]);
 	if (argc > 3)
-		stride = atoll(argv[3]);
+		count = atol(argv[3]);
+	if (argc > 4)
+		stride = atol(argv[4]);
+	if (argc > 5)
+		random = atol(argv[5]);
+	if (argc > 6)
+		atomic = atol(argv[6]);
 	
 	data_sz = sizeof(VARTYPE) * count * stride;
 	data = malloc(data_sz);
 
-	for (int k=0; k < LOOPCOUNT; k++) {
+/* C99 _Pragma is good, but has problems */
+
+#define PAR_FOR_TOP \
+	_Pragma ("omp for") \
+	for (int j=0; j < iters; j++) { \
+		for (int i=0; i < count; i++) { \
+			qseed = 1103515245*qseed + 12345;            \
+			ridx = qseed % count;                        \
+			uint32_t idx = (random ? ridx : i)*stride;
+#define PAR_FOR_BOT \
+		} \
+	}
+
+#define MAIN_FOR_TOP \
+	_Pragma ("omp parallel private(qseed) reduction(&:ridx)") \
+	{ \
+		qseed = omp_get_thread_num(); \
+		if (atomic) { \
+			PAR_FOR_TOP
+
+#define MAIN_FOR_MID \
+			PAR_FOR_BOT \
+		} else { \
+			PAR_FOR_TOP
+
+#define MAIN_FOR_BOT \
+			PAR_FOR_BOT \
+		} \
+	}
+
+
+	/* Measure average loop overhead */
+	double overhead = 1e12;
+	for (int k=0; k < loops; k++) {
+		dtime();
+
+		MAIN_FOR_TOP
+			ridx += idx;
+		MAIN_FOR_MID
+			ridx -= idx;
+		MAIN_FOR_BOT
+
+		double dt = dtime();
+		overhead = dt < overhead ? dt : overhead;
+	}
+
+	double   t = 0;
+	for (int k=0; k < loops; k++) {
 		for (int j=0; j < count; j++) {
 			data[j*stride] = 0;
 		}
 		dtime();
-		#pragma omp parallel for
-		for (int j=0; j < iters; j++) {
-			for (int i=0; i < count; i++) {
-				#ifdef ATOMIC
-				#pragma omp atomic
-				#endif
-				data[i*stride] += 1;
-			}
-		}
+
+		MAIN_FOR_TOP
+			_Pragma ("omp atomic")
+			data[idx] += 1;
+		MAIN_FOR_MID
+			data[idx] += 1;
+		MAIN_FOR_BOT
+
 		t += dtime();
 		err += get_error(data, iters, count, stride);
 	}
+	opt_hack = ridx;
 	/* report nanoseconds per add & avg err per thousand adds */
-	norm = 1.0 / (iters*count*LOOPCOUNT);
-	printf("%f,%f\n", 1e9*t*norm, 1e3*(double)err*norm /*, data_sz / 1024. */);
+	norm = 1.0 / (iters*count*loops);
+	overhead *= loops;
+	printf("%f,%f\n", 1e9*(t > overhead ? t - overhead : 0)*norm,1e3*(double)err*norm /*, data_sz / 1024. */);
 
 	return 0;
 }
