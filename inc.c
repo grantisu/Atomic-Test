@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
 	}
 
 
-	/* Measure average loop overhead */
+	/* Measure minimum loop overhead */
 	double overhead = 1e12;
 	for (int k=0; k < loops; k++) {
 		dtime();
