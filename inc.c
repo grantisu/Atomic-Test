@@ -65,6 +65,7 @@ int main(int argc, char **argv) {
 	}
 
 #define MAIN_FOR_TOP \
+	dtime(); \
 	_Pragma ("omp parallel private(qseed) reduction(&:ridx)") \
 	{ \
 		qseed = omp_get_thread_num(); \
@@ -79,13 +80,13 @@ int main(int argc, char **argv) {
 #define MAIN_FOR_BOT \
 			PAR_FOR_BOT \
 		} \
-	}
+	} \
+	double dt = dtime();
 
 
 	/* Measure minimum loop overhead */
 	double overhead = 1e12;
 	for (int k=0; k < loops; k++) {
-		dtime();
 
 		MAIN_FOR_TOP
 			ridx += idx;
@@ -93,7 +94,6 @@ int main(int argc, char **argv) {
 			ridx -= idx;
 		MAIN_FOR_BOT
 
-		double dt = dtime();
 		overhead = dt < overhead ? dt : overhead;
 	}
 
@@ -102,7 +102,6 @@ int main(int argc, char **argv) {
 		for (int j=0; j < count; j++) {
 			data[j*stride] = 0;
 		}
-		dtime();
 
 		MAIN_FOR_TOP
 			_Pragma ("omp atomic")
@@ -111,7 +110,7 @@ int main(int argc, char **argv) {
 			data[idx] += 1;
 		MAIN_FOR_BOT
 
-		t += dtime();
+		t += dt;
 	}
 	opt_hack = ridx;
 
