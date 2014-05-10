@@ -23,7 +23,7 @@ double dtime(void) {
 static volatile int opt_hack;
 
 int main(int argc, char **argv) {
-	uint32_t loops = 15;
+	double min_time = 0.25;
 	uint32_t iters = 1000;
 	uint32_t count = 10;
 	uint32_t stride = 1;
@@ -35,7 +35,11 @@ int main(int argc, char **argv) {
 	uint32_t print_everything=1;
 
 	if (argc > 1)
-		loops = atol(argv[1]);
+		min_time = strtod(argv[1], NULL);
+	if (min_time <= 0 || min_time > 600) {
+		fprintf(stderr, "Bad min_time: %s\n", argv[1]);
+		exit(EXIT_FAILURE);
+	}
 	if (argc > 2)
 		iters = atol(argv[2]);
 	if (argc > 3)
@@ -83,10 +87,9 @@ int main(int argc, char **argv) {
 	} \
 	double dt = dtime();
 
-	loops = 1;
-	double min_time = 0.25;
+	double loops = 1;
 	double noise_thresh = 0.001;
-	double t = 0, overhead;
+	double t = 0, overhead = 0;
 
 	while (t < min_time) {
 		if (t < noise_thresh)
