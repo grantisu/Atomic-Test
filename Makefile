@@ -18,7 +18,7 @@ inc_double: $(SRC)
 	$(CC) -DVARTYPE=double $(CFLAGS) $(LDFLAGS) $< -o $@
 
 MINTIME = 0.15
-ITERS   = 10000
+ITERS   = 500
 THREADS = 1 2 3 4
 VARS    = 1 32
 STRIDE  = 1
@@ -50,7 +50,6 @@ stdreport: all
 	@$(MAKE) --quiet  \
 	THREADS='1 2 3 4' \
 	MINTIME=0.25 \
-	ITERS=250 \
 	VARS="$$(seq -s ' ' 1 32) $$(seq -s ' ' 40 8 128) $$(seq -s ' ' 192 64 512) $$(seq -s ' ' 768 256 2048) $$(seq -s ' ' 2560 512 8192)" \
 	STRIDE='1 2 4 8 16 32 64 1024' \
 	test | tee $@
@@ -59,7 +58,6 @@ quickreport: all
 	@$(MAKE) --quiet  \
 	THREADS='1 2 4' \
 	MINTIME=0.25 \
-	ITERS=250 \
 	VARS="$$(seq -s ' ' 1 32) $$(seq -s ' ' 40 8 128) $$(seq -s ' ' 192 64 512) $$(seq -s ' ' 768 256 2048) $$(seq -s ' ' 2560 512 8192)" \
 	STRIDE='1 16 1024' \
 	test | tee $@
