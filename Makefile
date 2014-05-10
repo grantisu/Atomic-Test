@@ -62,6 +62,15 @@ quickreport: all
 	STRIDE='1 16 1024' \
 	test | tee $@
 
+# Should take about 5 minutes to run
+tinyreport: all
+	@$(MAKE) --quiet  \
+	THREADS='1 2 4' \
+	MINTIME=0.1 \
+	VARS="1 2 3 4 6 8 12 16 24 32 40 48 64 92 128 192 256 384 512 768 1024 1536 2048 2560 3072 4096 6144 8192" \
+	STRIDE='1 16 1024' \
+	test | tee $@
+
 clean:
 	@-rm $(PROG) $(EXTRA_PROG)
 
