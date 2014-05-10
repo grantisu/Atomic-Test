@@ -50,7 +50,8 @@ int main(int argc, char **argv) {
 	data_sz = sizeof(VARTYPE) * count * stride;
 	data = malloc(data_sz);
 
-/* C99 _Pragma is good, but has problems */
+/* C99 _Pragma is good, but still has issues that prevent
+ * using function-like macros */
 
 #define PAR_FOR_TOP \
 	_Pragma ("omp for") \
