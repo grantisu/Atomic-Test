@@ -16,9 +16,9 @@ inc_lock: $(SRC)
 LOOPS   = 20
 ITERS   = 10000
 THREADS = 1 2 3 4
-VARS    = 32
+VARS    = 1 32
 STRIDE  = 1
-RANDOM  = 0 1
+RANDOM  = 0
 ATOMIC  = 0 1
 
 test: all
