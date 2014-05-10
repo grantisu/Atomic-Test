@@ -2,16 +2,20 @@ CFLAGS := -Wall -std=c99 -O1 -fopenmp $(CFLAGS)
 
 SRC := inc.c
 PROG := inc
+EXTRA_PROG := inc_int64 inc_float inc_double
 
 all: $(PROG)
 
 .PHONY: test clean
 
-inc_nolock: $(SRC)
-	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+inc_int64: $(SRC)
+	$(CC) -DVARTYPE=int64_t $(CFLAGS) $(LDFLAGS) $< -o $@
 
-inc_lock: $(SRC)
-	$(CC) -DATOMIC $(CFLAGS) $(LDFLAGS) $< -o $@
+inc_float: $(SRC)
+	$(CC) -DVARTYPE=float $(CFLAGS) $(LDFLAGS) $< -o $@
+
+inc_double: $(SRC)
+	$(CC) -DVARTYPE=double $(CFLAGS) $(LDFLAGS) $< -o $@
 
 LOOPS   = 20
 ITERS   = 10000
@@ -61,5 +65,5 @@ quickreport: all
 	test | tee $@
 
 clean:
-	@-rm $(PROG)
+	@-rm $(PROG) $(EXTRA_PROG)
 
