@@ -42,52 +42,44 @@ Markdown doesn't have good colspan support; resulting table should be:
 | Data                  | Padding               | Padding               | Data                  | Padding               | Padding               |
 |         Stride                                                        |        Stride                                                         |
 -->
-<style>
-.at_memlayout { font-size: 80%; text-align: center; }
-.at_memlayout td { border: 1px solid #000; }
-.at_addr td { font-size: 60%; min-width: 5em; }
-.at_memlabel td { background-color: #aff; }
-.at_stride td { background-color: #ffb; }
-.at_memlayout td.at_greenbg { background-color: #afa; }
-</style>
-<table class="at_memlayout">
-<tr class="at_addr">
-<td>0x000</td>
-<td>0x001</td>
-<td>0x002</td>
-<td>0x003</td>
-<td>0x004</td>
-<td>0x005</td>
-<td>0x006</td>
-<td>0x007</td>
-<td>0x008</td>
-<td>0x009</td>
-<td>0x00a</td>
-<td>0x00b</td>
-<td>0x00c</td>
-<td>0x00d</td>
-<td>0x00e</td>
-<td>0x00f</td>
-<td>0x010</td>
-<td>0x011</td>
-<td>0x012</td>
-<td>0x013</td>
-<td>0x014</td>
-<td>0x015</td>
-<td>0x016</td>
-<td>0x017</td>
+<table style="font-size: 80%; text-align: center;">
+<tr style="font-size: 60%; min-width: 5em;">
+<td style="border: 1px solid #000;">0x000</td>
+<td style="border: 1px solid #000;">0x001</td>
+<td style="border: 1px solid #000;">0x002</td>
+<td style="border: 1px solid #000;">0x003</td>
+<td style="border: 1px solid #000;">0x004</td>
+<td style="border: 1px solid #000;">0x005</td>
+<td style="border: 1px solid #000;">0x006</td>
+<td style="border: 1px solid #000;">0x007</td>
+<td style="border: 1px solid #000;">0x008</td>
+<td style="border: 1px solid #000;">0x009</td>
+<td style="border: 1px solid #000;">0x00a</td>
+<td style="border: 1px solid #000;">0x00b</td>
+<td style="border: 1px solid #000;">0x00c</td>
+<td style="border: 1px solid #000;">0x00d</td>
+<td style="border: 1px solid #000;">0x00e</td>
+<td style="border: 1px solid #000;">0x00f</td>
+<td style="border: 1px solid #000;">0x010</td>
+<td style="border: 1px solid #000;">0x011</td>
+<td style="border: 1px solid #000;">0x012</td>
+<td style="border: 1px solid #000;">0x013</td>
+<td style="border: 1px solid #000;">0x014</td>
+<td style="border: 1px solid #000;">0x015</td>
+<td style="border: 1px solid #000;">0x016</td>
+<td style="border: 1px solid #000;">0x017</td>
 </tr>
-<tr class="at_memlabel">
-<td colspan=4 class="at_greenbg">Data</td>
-<td colspan=4>Padding</td>
-<td colspan=4>Padding</td>
-<td colspan=4 class="at_greenbg">Data</td>
-<td colspan=4>Padding</td>
-<td colspan=4>Padding</td>
+<tr style="background-color: #aff;">
+<td style="border: 1px solid #000; background-color: #afa;" colspan=4>Data</td>
+<td style="border: 1px solid #000;" colspan=4>Padding</td>
+<td style="border: 1px solid #000;" colspan=4>Padding</td>
+<td style="border: 1px solid #000; background-color: #afa;" colspan=4>Data</td>
+<td style="border: 1px solid #000;" colspan=4>Padding</td>
+<td style="border: 1px solid #000;" colspan=4>Padding</td>
 </tr>
-<tr class="at_stride">
-<td colspan=12>Stride</td>
-<td colspan=12>Stride</td>
+<tr style="background-color: #ffb;">
+<td style="border: 1px solid #000;" colspan=12>Stride</td>
+<td style="border: 1px solid #000;" colspan=12>Stride</td>
 </tr>
 </table>
 
