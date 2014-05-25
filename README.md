@@ -138,7 +138,7 @@ Adding the atomic pragma results in:
 which adds two function calls right in the hot path. This is extremely unfair
 to the atomic case, and does not produce reasonable results. This can be
 (mostly) fixed by letting GCC know that it can target modern ARM chips
-(`gcc -mcpu=cortex-a15 -mtune=cortex-a15`), thus generating:
+(`gcc -march=armv7-a`), thus generating:
 
     dmb     sy
     .LSYT354:
@@ -162,7 +162,7 @@ thing.
 
 `CFLAGS` can be edited in the Makefile, or passed in from the environment:
 
-    CFLAGS='-mcpu=cortex-a15 -mtune=cortex-a15' make
+    CFLAGS='-march=armv7-a' make
 
 
 Producing Results
