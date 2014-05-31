@@ -4,7 +4,7 @@ Atomic Test
 This is a tiny C project I wrote to explore the caching behavior of multicore
 systems. I wrote it after reading about [flat combining](
 http://www.cs.bgu.ac.il/~hendlerd/papers/flat-combining.pdf ) data structures,
-in order to explore when single-threaded execution outperforms multi-threaded
+in order to determine when single-threaded execution outperforms multi-threaded
 execution at a low level on [\*nix]( http://en.wikipedia.org/wiki/Unix-like )
 systems.
 
@@ -175,3 +175,6 @@ CSV file with more extensive results. `make stdreport` will take much longer,
 and produce more robust results; additional make targets can be added as
 necessary.
 
+To get a visual overview of the results, make sure you have [Pandas](
+http://pandas.pydata.org/ ) and [Matplotlib]( http://matplotlib.org/ )
+installed and run `./plotreport.py stdreport`.
