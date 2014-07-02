@@ -53,6 +53,10 @@ int main(int argc, char **argv) {
 	
 	data_sz = sizeof(VARTYPE) * count * stride;
 	data = malloc(data_sz);
+	if (data == NULL) {
+		fprintf(stderr, "Error: malloc(%lu) failed\n", data_sz);
+		exit(EXIT_FAILURE);
+	}
 
 /* C99 _Pragma is good, but still has issues that prevent
  * using function-like macros */
