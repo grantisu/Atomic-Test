@@ -46,6 +46,17 @@ test: all
 	  done ; \
 	done
 
+check_hier: all
+	@$(MAKE) --quiet  \
+	THREADS=1 \
+	MINTIME=0.1 \
+	STRIDE=1024 \
+	ITERS=100 \
+	RANDOM=0 \
+	ATOMIC=0 \
+	VARS="2 4 8 $$(seq -s ' ' 16 16 512) $$(seq -s ' ' 768 256 8196)" \
+	test
+
 stdreport: all
 	@$(MAKE) --quiet  \
 	THREADS='1 2 3 4' \

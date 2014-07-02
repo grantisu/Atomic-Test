@@ -86,9 +86,9 @@ Markdown doesn't have good colspan support; resulting table should be:
 The theory is that incrementing an integer is close to free on modern (i.e.
 [superscalar]( http://en.wikipedia.org/wiki/Superscalar )) systems, and so most
 of the time will be spent on memory access.  This can be seen by running the
-following:
+following (or `make check_hier`):
 
-    for i in `seq 1 16 512` `seq 768 256 8196`; do
+    for i in 2 4 8 `seq 16 16 512` `seq 768 256 8196`; do
       env OMP_NUM_THREADS=1 ./inc 0.1 100 $i 1024 0 0
     done
 
